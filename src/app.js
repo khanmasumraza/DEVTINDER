@@ -1,15 +1,29 @@
-const express= require ("express")
+const express=require("express")
 
-const app=express();
+const app= express();
 
-// This are request handler for different path "/abiut","/home" etc ... 
-app.use("/about",(req,res)=>{
-    res.end("This is our about pages yes s ..")
+app.use("/user",(req,res)=>{
+    res.send("lol")
 })
 
-app.use("/hello",(req,res)=>{
-    res.end("This is our express js server")
+
+// This will only handle GET call to /user
+app.get("/user",(req,res)=>{
+    res.send({firstname:"Masum",lastname:"Raza"})
 })
-app.listen(8888,()=>{
-    console.log("Server is running")
+
+app.post("/user",(req,res)=>{
+    // Saving data to DB
+    res.send("Data successfully save to database")
 })
+
+app.delete("/user",(req,res)=>{
+    res.send("Deleted succesfully")
+})
+
+// This method match all the HTTP method API calls to /test
+app.use("/contact",(req,res)=>{
+    res.send("This is my contact page")
+})
+
+app.listen(3000);
