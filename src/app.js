@@ -2,35 +2,27 @@ const express=require("express")
 
 const app=express();
 
-// app.use("/rputer",rh1,rh2,[rh3],rh4,rh5)
+const { adminAuth,userAuth} = require("./middlewares/auth");
 
-app.use("/user",[(req,res,next)=>{
-console.log("This is route handler 1")
-next();
-// res.send(" Response")
-},
 
-(req,res,next) =>{
-  console.log("Route handling 2 ")
-  // res.send("Response 2")
-  next();
-},
-(req,res,next) =>{
-  console.log("Route handling 3 ")
-  // res.send("Response 3")
-  next();
-},
+//Handle Auth Middleware for all GET POST ,....request
+app.use("/admin",adminAuth)
 
-(req,res,next) =>{
-  console.log("Route handling 4 ")
-  // res.send("Response 4")
-  next();
-},
-(req,res,next) =>{
-  console.log("Route handling 5 ")
-  res.send("Response 5")
-}
-]);
+app.post("/user/login",(req,res)=>{
+  res.send("User login succesfully")
+})
+
+app.get("/user",userAuth,(req,res)=>{
+  res.send("User data send")
+})
+app.get("/admin/getAllData",(req,res)=>{
+ res.send("All data send");
+})
+
+app.get("/admin/DeleteUser",(req,res)=>{
+   res.send("Delete the User")
+})
+
 
 app.listen(7777, () => {
   console.log("Server is successfully listening on port 7777...");
