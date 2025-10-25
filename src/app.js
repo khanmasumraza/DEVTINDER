@@ -2,6 +2,16 @@ const express=require("express")
 
 const app=express();
 
+const {khan,dummy,user,pass}=require ("./middlewares/practice")
+
+
+app.get("/home",khan)
+
+app.get("/admin",dummy,user)
+
+// app.get("/adminpass",pass)
+
+
 app.use("/",(err,req,res,next)=>{
 if(err){
   res.status(500).send("Something went wrong")
