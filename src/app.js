@@ -1,42 +1,35 @@
 const express=require("express")
+const dbConnect=require("./config/database")
+const User=require("./models/user")
 
 const app=express();
 
-const {khan,dummy,user,pass}=require ("./middlewares/practice")
+app.post("/signup",async (req,res)=>{
+   const user=new User({
+    firstName:"Khan",
+    lastName:"Masum",
+    emailID:"masum@gmail.com",
+    password:"khanbhau@124"
+   });
 
-
-app.get("/home",khan)
-
-app.get("/admin",dummy,user)
-
-// app.get("/adminpass",pass)
-
-
-app.use("/",(err,req,res,next)=>{
-if(err){
-  res.status(500).send("Something went wrong")
+try{
+  await user.save();
+  res.send("user added succesfully") 
 }
-});
-
-app.use("/getUserData",(req,res)=>{
-  // Logic of  DB call  and get user data
-// try{
- throw new Error("anaanajkl")
- res.send("User data send")
-// }
-// catch(err){
-//  res.status(500).send("Some error Contact Support Team")
-// }
-});
-
-
-app.use("/",(err,req,res,next)=>{
-if(err){
-  res.status(500).send("Something went wrong")
+catch(err){
+  res.status(400).send("Reqeust not added")
 }
-});
 
+})
+dbConnect()
 
-app.listen(7777, () => {
-  console.log("Server is successfully listening on port 7777...");
-});
+.then(()=>{
+    console.log("Database Connection done")
+    app.listen(7777, () => {
+      console.log("Server is successfully listening on port 7777...");
+    });
+
+})
+.catch(err=>{
+console.log("Connection not done")
+})
