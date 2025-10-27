@@ -4,13 +4,12 @@ const User=require("./models/user")
 
 const app=express();
 
+// middlewaare
+app.use(express.json());
+
 app.post("/signup",async (req,res)=>{
-   const user=new User({
-    firstName:"Khan",
-    lastName:"Masum",
-    emailID:"masum@gmail.com",
-    password:"khanbhau@124"
-   });
+
+   const user=new User(req.body);
 
 try{
   await user.save();
@@ -21,15 +20,16 @@ catch(err){
 }
 
 })
+
 dbConnect()
 
 .then(()=>{
     console.log("Database Connection done")
     app.listen(7777, () => {
       console.log("Server is successfully listening on port 7777...");
-    });
-
-})
-.catch(err=>{
-console.log("Connection not done")
-})
+    })
+  })
+  .catch(err=>{
+    console.log("Connection not done")
+  })
+  
