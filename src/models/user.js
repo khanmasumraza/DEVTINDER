@@ -1,16 +1,16 @@
 const mongoose =require ("mongoose")
 
 const userSchema= new mongoose.Schema({
-    firstName:{
+    firstname:{
         type:String
     },
-    lastName:{
+    lastname:{
         type:String
     },
-    email:{
+    emailId:{
         type:String
     },
-    age:{
+    password:{
         type:String
     },
     gender:{
