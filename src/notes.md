@@ -7,3 +7,8 @@
 // use timestamps 
 
 47.30
+
+// put a api level validation by doing thisdo avoid change email once registered
+// Add Api level valdiation on patch and post
+// Add Api validation for each field
+//data sanetization - you are sanetizing the data before sending data to database
