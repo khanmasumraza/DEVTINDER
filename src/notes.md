@@ -12,3 +12,4 @@
 // Add Api level valdiation on patch and post
 // Add Api validation for each field
 //data sanetization - you are sanetizing the data before sending data to database
+//You can add  schema level validation && api level validation

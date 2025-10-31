@@ -1,5 +1,5 @@
 const mongoose =require ("mongoose")
-
+const validator=require("validator")
 const userSchema= new mongoose.Schema({
     firstname:{
         type:String,
@@ -14,15 +14,23 @@ const userSchema= new mongoose.Schema({
     emailId:{
         type:String,
         required:true,
-        // by using unique you cannot send same email to databse it throw error
         unique:true,
-        // by lowercase email will be store in lowercase
         lowercase:true,
         trim:true,
+        validator(value){
+            if(!validator.isEmail(value)){
+                throw new Error ("Email is Invalid")
+            }
+            }
     },
     password:{
         type:String,
         required:true,
+        validator(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error ("Password is not strong")
+            }
+            }
     },
     gender:{
         type:String,
@@ -34,7 +42,12 @@ const userSchema= new mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://imgs.search.brave.com/3SWuWnQgFhsq940CBhII9PGkgIV5tXJjcCca6NOApjE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMy/NzU5MjUwNi92ZWN0/b3IvZGVmYXVsdC1h/dmF0YXItcGhvdG8t/cGxhY2Vob2xkZXIt/aWNvbi1ncmV5LXBy/b2ZpbGUtcGljdHVy/ZS1idXNpbmVzcy1t/YW4uanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPUJwUjBGVmFF/YTVGMjRHSXc3Szhu/TVdpaUdtYmI4cW1o/ZmtwWGNwMWRoUWc9"
+        default:"https://imgs.search.brave.com/3SWuWnQgFhsq940CBhII9PGkgIV5tXJjcCca6NOApjE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMy/NzU5MjUwNi92ZWN0/b3IvZGVmYXVsdC1h/dmF0YXItcGhvdG8t/cGxhY2Vob2xkZXIt/aWNvbi1ncmV5LXBy/b2ZpbGUtcGljdHVy/ZS1idXNpbmVzcy1t/YW4uanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPUJwUjBGVmFF/YTVGMjRHSXc3Szhu/TVdpaUdtYmI4cW1o/ZmtwWGNwMWRoUWc9",
+   validator(value){
+            if(!validator.isURL(value)){
+                throw new Error ("URL is Invalid")
+            }
+            }
     },
     about:{
         type:String,
