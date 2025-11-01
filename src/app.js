@@ -1,6 +1,8 @@
 const express=require("express")
 const dbConnect=require("./config/database")
 const User=require("./models/user");
+const validateSignUpData=require("./utils/validation")
+const bcrypt=require("bcrypt")
 
 const app=express();
 
@@ -9,18 +11,55 @@ app.use(express.json());
 
 app.post("/signup",async (req,res)=>{
 
-   const user=new User(req.body);
+  
+  try{
 
-try{
+  // Validation of the data
+  validateSignUpData(req)
+
+  // Encrypt the password
+  const {firstname,lastname,emailId,password}=req.body;
+
+  const passwordHash= await bcrypt.hash(password,10)
+  console.log(passwordHash);
+
+   const user=new User({
+    firstname,lastname,emailId,password:passwordHash,
+   });
   await user.save();
   res.send("user added succesfully") 
 }
 catch(err){
-  res.status(400).send("Reqeust not added")
+  res.status(400).send("ERROR: " + err.message)
 }
 
 })
 
+app.post("/login",async(req,res)=>{
+  try{
+const {emailId,password}=req.body;
+
+const user=await User.findOne({emailId})
+
+if(!user){
+  throw new Error("Invalid credientals")
+}
+
+const isPasswordValid= await bcrypt.compare(password,user.password)
+
+if(isPasswordValid){
+  res.send("User Login Succesfully")
+}
+else{
+  throw new Error("Invalid credientals")
+}
+  }
+  
+ catch(err){
+ res.status(400).send("ERROR: " + err.message)
+}
+  
+})
 // get user by mail
 
 app.get("/user",async(req,res)=>{
@@ -75,25 +114,25 @@ app.patch("/user/:userId",async(req,res)=>{
   const data=req.body;
 
   try {
-    const ALLOWED_UPDATES = [
-      "photoUrl",
-      "about",
-      "gender",
-      "age",
-      "skills",
-    ];
+  //   const ALLOWED_UPDATES = [
+  //     "photoUrl",
+  //     "about",
+  //     "gender",
+  //     "age",
+  //     "skills",
+  //   ];
 
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k)
-    );
+  //   const isUpdateAllowed = Object.keys(data).every((k) =>
+  //     ALLOWED_UPDATES.includes(k)
+  //   );
 
-    if (!isUpdateAllowed) {
-      throw new Error("Update not allowed");
-    }
+  //   if (!isUpdateAllowed) {
+  //     throw new Error("Update not allowed");
+  //   }
 
-    if(data.skills.length>10){
-      throw new Error("Skill size cannot be greater than 10")
-    }
+    // if(data.skills.length>10){
+    //   throw new Error("Skill size cannot be greater than 10")
+    // }
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
       runValidators: true,

@@ -7,9 +7,13 @@ const userSchema= new mongoose.Schema({
         required:true,
         minLength:5,
         maxLength:8,
+        lowercase:true,
     },
     lastname:{
-        type:String
+        type:String,
+        maxLength:7,
+        lowercase:true,
+        required:true
     },
     emailId:{
         type:String,
@@ -17,7 +21,7 @@ const userSchema= new mongoose.Schema({
         unique:true,
         lowercase:true,
         trim:true,
-        validator(value){
+        validate(value){
             if(!validator.isEmail(value)){
                 throw new Error ("Email is Invalid")
             }
@@ -26,7 +30,7 @@ const userSchema= new mongoose.Schema({
     password:{
         type:String,
         required:true,
-        validator(value){
+        validate(value){
             if(!validator.isStrongPassword(value)){
                 throw new Error ("Password is not strong")
             }
@@ -42,15 +46,16 @@ const userSchema= new mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://imgs.search.brave.com/3SWuWnQgFhsq940CBhII9PGkgIV5tXJjcCca6NOApjE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMy/NzU5MjUwNi92ZWN0/b3IvZGVmYXVsdC1h/dmF0YXItcGhvdG8t/cGxhY2Vob2xkZXIt/aWNvbi1ncmV5LXBy/b2ZpbGUtcGljdHVy/ZS1idXNpbmVzcy1t/YW4uanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPUJwUjBGVmFF/YTVGMjRHSXc3Szhu/TVdpaUdtYmI4cW1o/ZmtwWGNwMWRoUWc9",
+        default:"https://imgs.search.brave.com/Leoo4q0vBm5ciPBB6qHhs92ZhFt5K8ZmRHIuwGOcO7w/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXQuY29t/L3cvZnVsbC8wL2Qv/OC85NDkyLTE5MjB4/MTA4MC1kZXNrdG9w/LWZ1bGwtaGQtaHVs/ay1iYWNrZ3JvdW5k/LmpwZw",
    validator(value){
             if(!validator.isURL(value)){
                 throw new Error ("URL is Invalid")
             }
-            }
+        }
     },
     about:{
         type:String,
+        minLength:10,
         // If the user is not entering about data it will add default value
         default:"This is the default value of the user"
     },
@@ -60,6 +65,15 @@ const userSchema= new mongoose.Schema({
     age:{
         type:Number,
         min:18,
+        
+    },
+    phoneNumber:{
+        type:String,
+        validate(value){
+            if(!validator.isMobilePhone(value,'en-IN')){
+throw new Error ("Phone Number is invalid")
+            }
+        }
     }
 },{
     timestamps:true 
