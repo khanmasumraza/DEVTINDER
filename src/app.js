@@ -3,11 +3,14 @@ const dbConnect=require("./config/database")
 const User=require("./models/user");
 const validateSignUpData=require("./utils/validation")
 const bcrypt=require("bcrypt")
+const cookieParser=require("cookie-parser")
+const jwt=require("jsonwebtoken")
 
 const app=express();
 
 // middlewaare
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup",async (req,res)=>{
 
@@ -36,6 +39,7 @@ catch(err){
 })
 
 app.post("/login",async(req,res)=>{
+
   try{
 const {emailId,password}=req.body;
 
@@ -48,6 +52,15 @@ if(!user){
 const isPasswordValid= await bcrypt.compare(password,user.password)
 
 if(isPasswordValid){
+
+  // Create a jwt token
+
+  const token=await jwt.sign({_id:user._id},"KHAN@12")
+
+  // Add the token to cookie and send the response back to user
+
+res.cookie("token",token);
+
   res.send("User Login Succesfully")
 }
 else{
@@ -59,6 +72,33 @@ else{
  res.status(400).send("ERROR: " + err.message)
 }
   
+})
+
+app.get("/profile",async(req,res)=>{
+
+  try{
+const cookies=req.cookies;
+
+const {token}=cookies;
+if(!token){
+  throw new Error("Invalid token")
+}
+
+const decodedMessage= await jwt.verify(token,"KHAN@12")
+
+const {_id}=decodedMessage;
+
+
+
+const user=await User.findOne({_id});
+if(!user){
+  throw new Error("user not found")
+}
+res.send(user)
+  }
+ catch(err){
+ res.status(400).send("ERROR: " + err.message)
+}
 })
 // get user by mail
 

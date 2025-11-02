@@ -23,3 +23,14 @@ before entering data to database.
 // Never trust req.body adding malecious data
 
 *** Not working validation of all impreove
+
+
+// Episode 9
+
+// build signup api & login api
+// Add validation for email and name 
+// Encrype pasword
+// save to databse
+
+// login
+// find mail and compare
