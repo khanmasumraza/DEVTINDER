@@ -34,3 +34,22 @@ before entering data to database.
 
 // login
 // find mail and compare
+
+
+// Episode 10 
+
+Session 1
+// Install cookie-parser
+// Just send a dummy cookie to user
+// create get profile and check if you get the cookie back
+// Install jsonwebtoken
+// In Login API after email and password validation, create a JWT Token and send it to user
+// read the cookies inside your post file API and find the logged in user.
+
+Session 2
+
+// Create user auth middleware
+// Add the user auth middleware in profileapi and Sendconnection req
+// Set the expiry of jwt token and cookies for 7 days
+// Create userSchema method to getJWT()
+// Create userSchema method to comparepassword(passwordInputByUser)

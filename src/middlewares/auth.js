@@ -1,33 +1,31 @@
-const adminAuth=(req,res,next)=>{
+const jwt=require("jsonwebtoken") // lib to create json web token
+const User=require("../models/user")
 
-console.log("Admin auth is getting checked");
-
-const token="xyz";
-const isAdminAuthorized= token==="xyz";
-
-if(!isAdminAuthorized){
-  res.status(401).send("Unauthorized request")
+const userAuth=async(req,res,next)=>{
+  // Read the token from the req cookies
+ 
+ try{
+const {token}=req.cookies;
+if(!token){
+  throw new Error("Token is not valid")
 }
-else{
-  next();
+
+  const decodeObj= await jwt.verify(token,"KHAN@12")
+
+  const {_id}=decodeObj;
+
+const user= await User.findById(_id)
+if(!user){
+  throw new Error("User not found")
 }
-};
-
-
-const userAuth=(req,res,next)=>{
-console.log("Admin auth is getting checked");
-
-const token="xyza";
-const isAdminAuthorized= token==="xyz";
-
-if(!isAdminAuthorized){
-  res.status(401).send("Unauthorized request")
+req.user=user;
+next();
 }
-else{
-  next();
+
+catch(err){
+res.status(404).send("ERROR: " +err.message)
 }
-};
+}
 module.exports={
-    adminAuth,
-    userAuth
-}
+    userAuth,
+};
