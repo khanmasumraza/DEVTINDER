@@ -91,8 +91,25 @@ app.post("/sendConnectionRequest",userAuth,async (req,res)=>{
   // Sending Connection request
   console.log("Sending a connection reques")
 
-  res.send(user.firstname + "send the connection request")
+  res.send(user.lastname +  " send the connection request")
 })
+
+app.delete("/deleteAccount",userAuth,async(req,res)=>{
+  try{
+    console.log(req.user)
+  const user=req.user
+  await User.findByIdAndDelete(user._id)
+  res.send("Account delete succesfully")
+}
+catch(err){
+ res.status(400).send("ERROR: " + err.message)
+}
+});
+
+app.post("/logout",async(req,res)=>{
+res.cookie("token",null,{ expires: new Date(Date.now())});
+res.send("User logout succesfully")
+});
 dbConnect()
 
 .then(()=>{
