@@ -16,23 +16,6 @@ app.use("/",authRouter)
 app.use("/",profileRouter)
 app.use("/",requestRouter)
 
-// app.delete("/deleteAccount",userAuth,async(req,res)=>{
-//   try{
-//     console.log(req.user)
-//   const user=req.user
-//   await User.findByIdAndDelete(user._id)
-//   res.send("Account delete succesfully")
-// }
-// catch(err){
-//  res.status(400).send("ERROR: " + err.message)
-// }
-// });
-
-// app.post("/logout",async(req,res)=>{
-// res.cookie("token",null,{ expires: new Date(Date.now())});
-// res.send("User logout succesfully")
-// });
-
 dbConnect()
 
 .then(()=>{

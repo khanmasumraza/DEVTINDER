@@ -7,7 +7,6 @@ const userSchema= new mongoose.Schema({
     firstname:{
         type:String,
         // this is req check without this datbase not allow to insert data
-        required:true,
         minLength:5,
         maxLength:8,
         lowercase:true,
@@ -16,7 +15,6 @@ const userSchema= new mongoose.Schema({
         type:String,
         maxLength:7,
         lowercase:true,
-        required:true
     },
     emailId:{
         type:String,
