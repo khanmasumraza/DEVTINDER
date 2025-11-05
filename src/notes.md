@@ -53,3 +53,10 @@ Session 2
 // Set the expiry of jwt token and cookies for 7 days
 // Create userSchema method to getJWT()
 // Create userSchema method to comparepassword(passwordInputByUser)
+
+
+
+// Episode 11 33:20
+Explore Tinder Api
+Create a list all Api you can think of in devtinder
+Group multiple routes under repsective routes
