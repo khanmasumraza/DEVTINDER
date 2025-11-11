@@ -51,4 +51,13 @@ if(existingConnectionRequest){
   // res.send(user.lastname +  " send the connection request")
 })
 
+requestRouter.post(" /request/send/:status/:userId",userAuth,async(req,res)=>{
+try{
+  const loggedInuser=req.user;
+}
+catch(err){
+  res.status(400).send("ERROR:"+err.message);
+}
+  
+})
 module.exports=requestRouter;
