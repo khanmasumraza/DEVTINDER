@@ -13,7 +13,7 @@ profileRouter
 connectionRequestRouter
 
 -POST /request/send/:status/:userId
--POST /request/review/:status/:userId
+-POST /request/review/:status/:requestuserId
 
 UserRouter
 -GET /user/connections

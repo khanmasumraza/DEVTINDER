@@ -79,7 +79,11 @@ throw new Error ("Phone Number is invalid")
     timestamps:true 
 });
 
-userSchema.index({firstname:1,lastname:1})
+// User.find({firstname:"khan",lastname:"masum"}) // adding index
+userSchema.index({firstname:1,lastname:1}) 
+userSchema.index({gender:1}) 
+
+
 userSchema.methods.getJWT=async function(){
     const user =this;
   const token= await jwt.sign({_id:user._id},"KHAN@12",{expiresIn:"1d"});
