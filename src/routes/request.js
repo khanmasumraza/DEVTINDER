@@ -1,14 +1,12 @@
 const express=require("express")
 const requestRouter=express.Router();
 const {userAuth}=require("../middlewares/auth");
-const connectionRequestModel=require("../models/connectionRequest")
-const User=require("../models/user")
+const ConnectionRequestModel=require("../models/connectionRequest")
+const User=require("../models/user");
 
 requestRouter.post("/request/send/:status/:toUserId",userAuth,async (req,res)=>{
-
   try{
-
-    const fromUserId=req.user_id;
+    const fromUserId=req.user._id;
 const toUserId=req.params.toUserId;
 const status=req.params.status;
 
@@ -23,7 +21,7 @@ if(!toUser){
 }
     // if there is  an existing Connection Request
 
-    const existingConnectionRequest= await  ConnectionRequest.findOne({
+    const existingConnectionRequest= await  ConnectionRequestModel.findOne({
   $or:[
     {fromUserId,toUserId},
         {fromUserId:toUserId,toUserId:fromUserId}
@@ -33,14 +31,14 @@ if(!toUser){
 if(existingConnectionRequest){
   return res.status(400).send({message:"Connection request already exists"})
 }
-    const connectionRequest=new ConnectionRequest({
+    const connectionRequest=new ConnectionRequestModel({
   fromUserId,toUserId,status
 })
 
 const data=await connectionRequest.save();
 
 res.json({
-      message:req.user.firstName+"is"+status+"in"+toUser.firstname,
+      message:req.user.firstname + " is " +status+ " in "+toUser.firstname,
   data
     });
   }

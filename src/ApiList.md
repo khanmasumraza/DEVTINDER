@@ -16,8 +16,8 @@ connectionRequestRouter
 -POST /request/review/:status/:requestuserId
 
 UserRouter
+-GET /user/requests/received
 -GET /user/connections
--GET /user/request
 -GET /user/feed -Gets you the profiles of other users on platform
 
 Status: ignore,intrested,accepted,rejected
