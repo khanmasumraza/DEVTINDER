@@ -3,6 +3,7 @@ const userRouter=express.Router()
 
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequestModel=require("../models/connectionRequest");
+const User=require("../models/user")
 
 const USER_SAFE_DATA="firstname lastname  photoUrl";
 // Get all the pending connection request for the loggedIn user
@@ -50,5 +51,38 @@ res.json({data})
   }
 })
 
+userRouter.get("/feed",userAuth,async(req,res)=>{
+  try{
+const loggedInUser=req.user;
+
+// Find all the connection requests (sent +recieved)
+ 
+const connectionRequest= await ConnectionRequestModel.find({
+  $or:[
+    {fromUserId:loggedInUser._id},
+    {toUserId:loggedInUser._id}
+  ]
+}).select("fromUserId toUserId")
+
+const hideUsersFromFeed=new Set();
+connectionRequest.forEach((req)=>{
+hideUsersFromFeed.add(req.fromUserId.toString())
+hideUsersFromFeed.add(req.toUserId.toString())
+});
+
+
+const users=await User.find({
+  $and:[
+    {_id:{$nin:Array.from(hideUsersFromFeed) } },
+       {_id:{$ne:loggedInUser._id } },
+],
+}).select(USER_SAFE_DATA)
+res.send(users);
+
+  }
+  catch(err){
+    res.status(400).json({message:err.message})
+  }
+})
 
 module.exports=userRouter;

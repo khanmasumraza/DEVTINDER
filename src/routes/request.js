@@ -51,9 +51,7 @@ res.json({
 requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=>{
   
   try{
-
     // validating the status
-
     const loggedInUser=req.user;
     const {status,requestId}=req.params;
 
