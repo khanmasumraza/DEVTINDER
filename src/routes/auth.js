@@ -18,8 +18,15 @@ authRouter.post("/signup",async (req,res)=>{
    const user=new User({
     firstname,lastname,emailId,password:passwordHash,
    });
-  await user.save();
-  res.send("user added succesfully") 
+ const savedUser= await user.save();
+
+ const token=await savedUser.getJWT();
+
+res.cookie("token",token,{
+  expires:new Date(Date.now()+8*3600000)
+});
+
+  res.json({message:"user added succesfully",data:savedUser}) 
 }
 catch(err){
   res.status(400).send("ERROR: " + err.message)
@@ -44,9 +51,11 @@ if(isPasswordValid){
 
   const token=await user.getJWT();
 
-res.cookie("token",token,{expires:new Date(Date.now()+8*3600000),});
+res.cookie("token",token,{
+  expires:new Date(Date.now()+8*3600000)
+});
 
-  res.send("User Login Succesfully")
+  res.send(user)
 }
 else{
   throw new Error("Invalid credientals")

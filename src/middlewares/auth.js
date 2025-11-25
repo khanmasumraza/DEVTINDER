@@ -1,31 +1,32 @@
-const jwt=require("jsonwebtoken") // lib to create json web token
-const User=require("../models/user")
+const jwt = require('jsonwebtoken') // lib to create json web token
+const User = require('../models/user')
 
-const userAuth=async(req,res,next)=>{
+const userAuth = async (req, res, next) => {
   // Read the token from the req cookies
- 
- try{
-const {token}=req.cookies;
-if(!token){
-  throw new Error("Token is not valid")
-}
+  if (req.method === 'OPTIONS') {
+    return next()
+  }
 
-  const decodeObj= await jwt.verify(token,"KHAN@12")
+  try {
+    const { token } = req.cookies
+    if (!token) {
+      return res.status(401).send('Please Login')
+    }
 
-  const {_id}=decodeObj;
+    const decodeObj = await jwt.verify(token, 'KHAN@12')
 
-const user= await User.findById(_id)
-if(!user){
-  throw new Error("User not found")
-}
-req.user=user;
-next();
-}
+    const { _id } = decodeObj
 
-catch(err){
-res.status(404).send("ERROR: " +err.message)
+    const user = await User.findById(_id)
+    if (!user) {
+      throw new Error('User not found')
+    }
+    req.user = user
+    next()
+  } catch (err) {
+    res.status(404).send('ERROR: ' + err.message)
+  }
 }
+module.exports = {
+  userAuth,
 }
-module.exports={
-    userAuth,
-};
