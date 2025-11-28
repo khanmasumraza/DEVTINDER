@@ -60,3 +60,15 @@ Session 2
 Explore Tinder Api
 Create a list all Api you can think of in devtinder
 Group multiple routes under repsective routes
+
+
+
+# Adding a custom domain name 
+
+-Purchasing domain name from godaddy
+-signup on cloudfare & add a new domain name
+-change the nameservers on godaddy and point it to cloudfare
+-wait for sometime  till your  namservers are update ~ 15 minutes
+-DNS record:A devtinder.in 43.204.96.49
+-Enable SSL for website
+

@@ -3,19 +3,14 @@ const dbConnect = require('./config/database')
 const cookieParser = require('cookie-parser')
 const app = express()
 const cors = require('cors')
+require('dotenv').config()
 
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie')
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
-  }
-  next()
-})
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+)
 
 app.use(express.json())
 app.use(cookieParser())
