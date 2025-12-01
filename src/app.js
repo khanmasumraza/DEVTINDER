@@ -3,6 +3,7 @@ const dbConnect = require('./config/database')
 const cookieParser = require('cookie-parser')
 const app = express()
 const cors = require('cors')
+
 require('dotenv').config()
 
 app.use(
@@ -28,10 +29,12 @@ app.use('/', userRouter)
 dbConnect()
   .then(() => {
     console.log('Database Connection done')
-    app.listen(7777, () => {
+
+   require("./utils/cronjob")
+    app.listen(process.env.PORT, () => {
       console.log('Server is successfully listening on port 7777...')
     })
   })
   .catch((err) => {
-    console.log('Connection not done')
+    console.log('Connection not done',err)
   })

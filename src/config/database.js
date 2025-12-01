@@ -1,7 +1,7 @@
-const mongoose=require ("mongoose")
+const mongoose = require('mongoose')
 
-const dbConnect= async () =>{
-await mongoose.connect("mongodb+srv://MasumRaza89:Masumdatasecure23@masumraza.qjpiwch.mongodb.net/devTinder")
+const dbConnect = async () => {
+  await mongoose.connect(process.env.DB_CONNECTION_KEY)
 }
 
-module.exports=dbConnect;
+module.exports = dbConnect
