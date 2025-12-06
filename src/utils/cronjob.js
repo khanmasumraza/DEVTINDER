@@ -12,6 +12,7 @@ cron.schedule("0 8 * * *", async () => {
     const yesterday = subDays(new Date(), 1);
     const yesterdayStart = startOfDay(yesterday);
     const yesterdayEnd = endOfDay(yesterday);
+    
     const pendingRequests = await ConnectionRequestModel.find({
       status: "intrested",
       createdAt: {
