@@ -87,24 +87,29 @@ paymentRouter.post('/payment/webhook', async (req, res) => {
     payment.status = paymentDetails.status
     await payment.save()
 
-    const user = await User.findOne({ _id: payment.userId })
+    // Only make user premium if payment is captured
+    if (paymentDetails.status === 'captured') {
+      const user = await User.findOne({ _id: payment.userId })
 
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found' })
+      if (!user) {
+        console.log('User not found:', payment.userId)
+        return res.status(404).json({ msg: 'User not found' })
+      }
+
+      user.isPremium = true
+      user.membershipType = payment.notes.membershipType
+      await user.save()
+      console.log('User upgraded to premium:', user.emailId)
     }
-    user.isPremium = true
-    user.membershipType = payment.notes.membershipType
-    await user.save()
 
-    // if (req.body.event === 'payment-captured') {
-    // }
+    if (paymentDetails.status === 'failed') {
+      console.log('Payment failed for order:', paymentDetails.order_id)
+    }
 
-    // if (req.body.event === 'payment-failed') {
-    // }
-
-    return res.status(200).json({ msg: 'webhook recieved succesfully' })
+    return res.status(200).json({ msg: 'Webhook received successfully' })
   } catch (err) {
-    res.status(400).json({ msg: err.message })
+    console.log('Webhook error:', err)
+    res.status(500).json({ msg: err.message })
   }
 })
 
