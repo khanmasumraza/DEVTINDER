@@ -4,7 +4,9 @@ const razorpayInstance = require('../utils/razorpay')
 const Payment = require('../models/payment')
 const User = require('../models/user')
 const { membershipAmount } = require('../utils/constants')
-const {validateWebhookSignature} = require('razorpay/dist/utils/razorpay-utils')
+const {
+  validateWebhookSignature,
+} = require('razorpay/dist/utils/razorpay-utils')
 const { tr } = require('date-fns/locale')
 
 const paymentRouter = express.Router()
@@ -57,57 +59,48 @@ paymentRouter.post('/payment/create', userAuth, async (req, res) => {
 
 paymentRouter.post('/payment/webhook', async (req, res) => {
   try {
-    const webhookSignature = req.get('X-Razorpay-Signature')
+    console.log('Webhook Called')
 
-    if (!webhookSignature) {
-      return res.status(400).json({ msg: 'Webhook signature is missing' })
-    }
+    const signature = req.get('X-Razorpay-Signature')
 
-    const webhookValid = validateWebhookSignature(
-      JSON.stringify(req.body),
-      webhookSignature,
+    const isValid = validateWebhookSignature(
+      req.body, // ❗ raw buffer (NOT JSON.stringify)
+      signature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
 
-    if (!webhookValid) {
-      return res.status(400).json({ msg: 'webhook Signature is invalid' })
+    if (!isValid) {
+      console.log('Invalid Webhook Signature')
+      return res.status(400).json({ msg: 'Invalid signature' })
     }
 
-    // Update the payment status in db
+    console.log('Valid Webhook Signature')
 
-    const paymentDetails = req.body.payload.payment.entity
+    const payload = JSON.parse(req.body.toString()) // convert buffer → JSON
+
+    const paymentDetails = payload.payload.payment.entity
 
     const payment = await Payment.findOne({ orderId: paymentDetails.order_id })
 
     if (!payment) {
-      return res.status(400).json({ msg: 'Payment not found' })
+      console.log('Payment not found')
+      return res.status(404).json({ msg: 'Payment not found' })
     }
+
     payment.status = paymentDetails.status
     await payment.save()
 
-    // Only make user premium if payment is captured
-    if (paymentDetails.status === 'captured') {
-      const user = await User.findOne({ _id: payment.userId })
+    const user = await User.findById(payment.userId)
+    user.isPremium = true
+    user.membershipType = payment.notes.membershipType
+    await user.save()
 
-      if (!user) {
-        console.log('User not found:', payment.userId)
-        return res.status(404).json({ msg: 'User not found' })
-      }
+    console.log('User upgraded to premium')
 
-      user.isPremium = true
-      user.membershipType = payment.notes.membershipType
-      await user.save()
-      console.log('User upgraded to premium:', user.emailId)
-    }
-
-    if (paymentDetails.status === 'failed') {
-      console.log('Payment failed for order:', paymentDetails.order_id)
-    }
-
-    return res.status(200).json({ msg: 'Webhook received successfully' })
+    return res.status(200).json({ msg: 'Webhook received' })
   } catch (err) {
-    console.log('Webhook error:', err)
-    res.status(500).json({ msg: err.message })
+    console.log('Error:', err)
+    return res.status(500).json({ msg: err.message })
   }
 })
 
